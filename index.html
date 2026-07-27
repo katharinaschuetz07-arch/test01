@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Analyse: Die K.I. und der Zauberlehrling</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Strict Purple & White Main Theme */
+        body {
+            background: #2e0854;
+            color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 12px;
+            line-height: 1.6;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Top Navigation Header */
+        .header-controls {
+            position: sticky;
+            top: 10px;
+            z-index: 1000;
+            background: #4a154b;
+            padding: 12px;
+            border-radius: 16px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+            border: 2px solid #ffffff;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        /* Visible Sub-Header Title */
+        .header-title {
+            text-align: center;
+            font-size: 14px;
+            font-weight: 800;
+            color: #ffffff !important;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 2px;
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+
+        /* Spotify Bar Row with Percentage right beside it */
+        .spotify-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .spotify-bar-container {
+            flex-grow: 1;
+            background: rgba(255, 255, 255, 0.25);
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .spotify-bar-fill {
+            height: 100%;
+            background: #ffffff;
+            width: 10%;
+            transition: width 0.3s ease;
+        }
+
+        .percentage-text {
+            font-size: 12px;
+            font-weight: bold;
+            color: #e0aaff !important;
+            min-width: 40px;
+            text-align: right;
+            display: inline-block !important;
+            visibility: visible !important;
+        }
+
+        .progress-text {
+            text-align: center;
+            font-size: 11px;
+            color: #e0aaff !important;
+            font-weight: normal;
+        }
+
+        /* Equal-Size Navigation Buttons */
+        .button-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 6px;
+            margin-top: 4px;
+        }
+
+        .btn-nav {
+            background: #ffffff;
+            color: #2e0854;
+            border: 2px solid #ffffff;
+            padding: 8px 4px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            flex: 1 1 0px;
+            width: 33.33%;
+            text-align: center;
+            user-select: none;
+            white-space: nowrap;
+        }
+
+        .btn-nav:active {
+            transform: scale(0.97);
+        }
+
+        .btn-read {
+            background: #e0aaff;
+            color: #2e0854;
+        }
+
+        /* Grid Menu Navigation: 2 Rows x 5 Buttons */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 6px;
+            margin-bottom: 15px;
+            max-width: 750px;
+            margin-left: auto;
+            margin-right: auto;
+            width: 100%;
+        }
+
+        .menu-chip {
+            background: #ffffff;
+            color: #2e0854;
+            padding: 8px 2px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: bold;
+            cursor: pointer;
+            border: 1px solid #ffffff;
+            text-align: center;
+            user-select: none;
+        }
+
+        .menu-chip.active {
+            background: #e0aaff;
+            color: #2e0854;
+            border-color: #ffffff;
+        }
+
+        /* Content Cards */
+        .content-container {
+            max-width: 750px;
+            margin: 0 auto;
+            width: 100%;
+            flex-grow: 1;
+        }
+
+        .section-card {
+            display: none;
+            background: #ffffff;
+            color: #2e0854 !important;
+            border-radius: 20px;
+            padding: 22px;
+            margin-bottom: 20px;
+            border: 3px solid #e0aaff;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            cursor: pointer;
+        }
+
+        .section-card.active {
+            display: block;
+        }
+
+        /* Typography */
+        h1 {
+            font-size: 20px;
+            text-align: center;
+            margin-bottom: 15px;
+            color: #2e0854 !important;
+            text-transform: uppercase;
+        }
+
+        h2 {
+            font-size: 17px;
+            margin-bottom: 12px;
+            color: #2e0854 !important;
+            border-bottom: 2px solid #2e0854;
+            padding-bottom: 6px;
+        }
+
+        p, li, span, div, strong, em {
+            color: #2e0854 !important;
+        }
+
+        p {
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+
+        ul {
+            margin-left: 18px;
+            margin-bottom: 12px;
+        }
+
+        li {
+            margin-bottom: 6px;
+            font-size: 13.5px;
+        }
+
+        .curly-box {
+            background: #2e0854;
+            color: #ffffff !important;
+            border-radius: 12px;
+            padding: 14px 16px;
+            margin: 14px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: 2px solid #e0aaff;
+        }
+
+        .curly-box p, .curly-box div, .curly-box strong, .curly-box span {
+            color: #ffffff !important;
+        }
+
+        .curly-brace {
+            font-size: 34px;
+            font-weight: bold;
+            color: #e0aaff !important;
+            line-height: 1;
+            font-family: Georgia, serif;
+        }
+
+        .curly-text {
+            font-size: 13.5px;
+            color: #ffffff !important;
+            flex-grow: 1;
+        }
+
+        .click-hint {
+            text-align: right;
+            font-size: 11px;
+            color: #4a154b !important;
+            font-style: italic;
+            margin-top: 10px;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 2px solid #e0aaff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            text-align: center;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            font-size: 13px;
+            width: 100%;
+        }
+
+        .footer-btn {
+            background: transparent;
+            border: none;
+            color: #e0aaff !important;
+            text-decoration: underline;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .footer-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            font-size: 12px;
+        }
+
+        .copyright {
+            color: #ffffff !important;
+        }
+
+        .version-tag {
+            color: #e0aaff !important;
+            font-weight: bold;
+        }
+
+        /* Modal styling */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.88);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+        }
+
+        .modal-content {
+            background: #ffffff !important;
+            border: 3px solid #2e0854;
+            border-radius: 16px;
+            padding: 22px;
+            max-width: 650px;
+            width: 100%;
+            position: relative;
+            max-height: 85vh;
+            overflow-y: auto;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .modal-content h3 {
+            color: #2e0854 !important;
+            border-bottom: 2px solid #2e0854;
+            padding-bottom: 6px;
+            margin-bottom: 12px;
+        }
+
+        .modal-content p, .modal-content li, .modal-content strong {
+            color: #2e0854 !important;
+            margin-bottom: 10px;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: #2e0854;
+            border: none;
+            color: #ffffff !important;
+            font-size: 20px;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Controls -->
+    <div class="header-controls">
+        <div class="header-title">KI-Analyse</div>
+        
+        <div class="spotify-row">
+            <div class="spotify-bar-container">
+                <div class="spotify-bar-fill" id="spotifyProgress"></div>
+            </div>
+            <div class="percentage-text" id="percentDisplay">10%</div>
+        </div>
+
+        <div class="progress-text" id="progressIndicator">Abschnitt 1 von 10</div>
+
+        <div class="button-row">
+            <button class="btn-nav" id="btnPrev" onclick="userNavigate(-1)">&#10094; Zurück</button>
+            <button class="btn-nav btn-read" id="btnRead" onclick="toggleRead()">&#128066; Vorlesen</button>
+            <button class="btn-nav" id="btnNext" onclick="userNavigate(1)">Weiter &#10095;</button>
+        </div>
+    </div>
+
+    <!-- Grid Menu Navigation: 2 Rows x 5 Buttons -->
+    <div class="menu-grid">
+        <span class="menu-chip active" onclick="userGoToCard(0)">NR 1</span>
+        <span class="menu-chip" onclick="userGoToCard(1)">NR 2</span>
+        <span class="menu-chip" onclick="userGoToCard(2)">NR 3</span>
+        <span class="menu-chip" onclick="userGoToCard(3)">NR 4</span>
+        <span class="menu-chip" onclick="userGoToCard(4)">NR 5</span>
+        <span class="menu-chip" onclick="userGoToCard(5)">NR 6</span>
+        <span class="menu-chip" onclick="userGoToCard(6)">NR 7</span>
+        <span class="menu-chip" onclick="userGoToCard(7)">NR 8</span>
+        <span class="menu-chip" onclick="userGoToCard(8)">NR 9</span>
+        <span class="menu-chip" onclick="userGoToCard(9)">NR 10</span>
+    </div>
+
+    <div class="content-container">
+
+        <!-- Card 1 -->
+        <div class="section-card active" id="sec-0" onclick="cardClickNavigate(0)">
+            <h1>Analyse: K.I., Präzision & Achtsamkeit</h1>
+            
+            <div class="curly-box">
+                <span class="curly-brace">{</span>
+                <div class="curly-text">
+                    <strong>Einleitung:</strong> Künstliche Intelligenz ist ein mächtiges Werkzeug. Sie berechnet Daten blitzschnell, erfordert aber unser volles Bewusstsein und unsere Achtsamkeit.
+                </div>
+                <span class="curly-brace">}</span>
+            </div>
+
+            <h2>1. Der Zauberlehrling & die K.I.</h2>
+            <p>Schon Johann Wolfgang von Goethe beschrieb im »Zauberlehrling« das Phänomen, wenn eine Kraft entfesselt wird, die man ohne das nötige Bewusstsein nicht mehr beherrschen kann.</p>
+            <p><strong>Die Analogie:</strong> Der Zauberlehrling nutzt den Zauberspruch, ohne die nötige Reife zu besitzen. Das Ergebnis ist eine Überschwemmung – das Wasser kippt über ihm zusammen. Genauso ist K.I. für uns ein Werkzeug, das wir bewusst bedienen müssen, um nicht von der Datenflut überrascht zu werden.</p>
+            <div class="click-hint">&#10140; Klicke auf die Karte, um weiterzugehen</div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="section-card" id="sec-1" onclick="cardClickNavigate(1)">
+            <h2>2. Wie präzise arbeitet eine K.I. wirklich?</h2>
+            
+            <div class="curly-box">
+                <span class="curly-brace">{</span>
+                <div class="curly-text">
+                    <strong>Wichtig zu wissen:</strong> K.I. hat kein menschliches Gehirn. Sie errechnet logische und sprachliche Wahrscheinlichkeiten auf Basis riesiger Datenmengen.
+                </div>
+                <span class="curly-brace">}</span>
+            </div>
+
+            <p>Eine K.I. versteht Wörter nicht wie wir Menschen. Sie ist extrem stark darin, Texte zu strukturieren, Sprachen zu übersetzen, Grammatik zu korrigieren und beim Programmieren zu helfen.</p>
+            <p>Ihre Präzision hängt jedoch immer von zwei Dingen ab: Wie gut ist die Frage gestellt (Prompt) und wie verlässlich sind die Trainingsdaten?</p>
+            <div class="click-hint">&#10140; Klicke auf die Karte, um weiterzugehen</div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="section-card" id="sec-2" onclick="cardClickNavigate(2)">
+            <h2>3. Die Unschärfe: Fehler & Halluzinationen</h2>
+            
+            <div class="curly-box">
+                <span class="curly-brace">{</span>
+                <div class="curly-text">
+                    <strong>Achtung vor Fakes:</strong> Fehlen der K.I. Informationen, erfindet sie manchmal Antworten, die völlig überzeugend klingen, aber falsch sind.
+                </div>
+                <span class="curly-brace">}</span>
+            </div>
+
+            <p>Warum macht K.I. Fehler?</p>
+            <ul>
+                <li><strong>Falsche oder veraltete Quellen:</strong> Auch auf Plattformen wie Wikipedia stehen ungenaue oder falsche Inhalte, mit denen die K.I. gefüttert wurde.</li>
+                <li><strong>Fehlendes Faktenwissen:</strong> Die K.I. prüft nicht, ob etwas in der echten Welt "wahr" ist, sondern nur, ob der Satz grammatikalisch Sinn ergibt.</li>
+            </ul>
+            <div class="click-hint">&#10140; Klicke auf die Karte, um weiterzugehen</div>
+        </div>
+
+        <!-- Card 4 -->
+        <div class="section-card" id="sec-3" onclick="cardClickNavigate(3)">
+            <h2>4. Gefahren: Manipulation & Steuerung</h2>
+            
+            <div class="curly-box">
+                <span class="curly-brace">{</span>
+                <div class="curly-text">
+                    <strong>Gefahr der Beeinflussung:</strong> Wenn Menschen K.I. gezielt mit einseitigen Daten füttern, kann dies zur gezielten Steuerung und Manipulation genutzt werden.
+                </div>
+                <span class="curly-brace">}</span>
+            </div>
+
+            <p>Daher gilt beim Lernen für Schule, Studium und Alltag:</p>
+            <ul>
+                <li>Niemals blind auf K.I.-Inhalte verlassen.</li>
+                <li>Immer den eigenen Verstand einschalten und mehrere Quellen vergleichen.</li>
+                <li>Sich bewusst machen, dass K.I.-Inhalte Meinungen oder falsche Informationen transportieren können.</li>
+            </ul>
+            <div class="click-hint">&#10140; Klicke auf die Karte, um weiterzugehen</div>
+        </div>
+
+        <!-- Card 5 -->
+        <div class="section-card" id="sec-4" onclick="cardClickNavigate(4)">
+            <h2>5. Der achtsame Umgang mit K.I.</h2>
+            
+            <div class="curly-box">
+                <span class="curly-brace">{</span>
+                <div class="curly-text">
+                    <strong>Goldene Regel:</strong> Behandle die K.I. als wertvollen Assistenten, aber behalte stets selbst die Verantwortung als Prüfer!
+                </div>
+                <span class="curly-brace">}</span>
+            </div>
+
+            <p>So wie wir im Alltag achtsam miteinander umgehen, so sollten wir auch mit der Technologie umgehen. K.I. ist ein Geschenk, das uns beim Lernen unterstützt – wenn wir mit Bewusstsein, Kritikfähigkeit und Verstand handeln.</p>
+            <div class="click-hint">&#10140; Klicke auf die Karte, um weiterzugehen</div>
+        </div>
+
+        <!-- Card 6 -->
+        <div class="section-card" id="sec-5" onclick="cardClickNavigate(5)">
+            <h2>6. Zwischenfazit & Kernanalyse</h2>
+            
+            <div class="curly-box">
+                <span class="curly-brace">{</span>
+                <div class="curly-text">
+                    <strong>Kernfazit:</strong> K.I. bringt Schnelligkeit und Struktur, der Mensch bringt Bewusstsein, Herz und kritischen Verstand.
+                </div>
+                <span class="curly-brace">}</span>
+            </div>
+
+            <p>Künstliche Intelligenz kann Lernprozesse enorm bereichern. Doch ähnlich wie im Zauberlehrling müssen wir Meister unseres eigenen Handelns bleiben. Nur mit Überprüfung und Hinterfragen vermeiden wir die Datenflut.</p>
+            <div class="click-hint">&#10140; Klicke auf die Karte, um weiterzugehen</div>
+        </div>
+
+        <!-- Card 7 -->
+        <div class="section-card" id="sec-6" onclick="cardClickNavigate(6)">
+            <h2>7. Die Illusion der »Göttlichen Eingebung«</h2>
+            
+            <div class="curly-box">
+                <span class="curly-brace">{</span>
+                <div class="curly-text">
+                    <strong>Gefahr der Esoterik-Falle:</strong> K.I.-Texte sind keine Botschaften von Gott, Engeln oder höheren Wesen.
+                </div>
+                <span class="curly-brace">}</span>
+            </div>
+
+            <p>Es entstehen aktuell Kanäle und Strömungen, die K.I.-Texte als »göttliche Fügung« oder spirituelle Offenbarungen verkaufen. Hier besteht die große Gefahr der Manipulation!</p>
+            <p>Wenn Menschen glauben, eine Maschine würde Worte Gottes sprechen, geben sie ihre eigene Verantwortung ab. K.I. berechnet nur Worte – sie hat keine Seele und keinen Zugang zum Göttlichen.</p>
+            <div class="click-hint">&#10140; Klicke auf die Karte, um weiterzugehen</div>
+        </div>
+
+        <!-- Card 8 -->
+        <div class="section-card" id="sec-7" onclick="cardClickNavigate(7)">
+            <h2>8. Die Falle von Eitelkeit & Ego</h2>
+            
+            <div class="curly-box">
+                <span class="curly-brace">{</span>
+                <div class="curly-text">
+                    <strong>Menschliche Schwäche:</strong> Das Ego lässt sich leicht täuschen, wenn die K.I. Worte wählt, die einen als »Auserwählten« bestätigen.
+                </div>
+                <span class="curly-brace">}</span>
+            </div>
+
+            <p>Wenn Menschen sich selbst zu den "Auserwählten" zählen oder glauben, durch die K.I. eine sondergleiche Weisheit erhalten zu haben, schleicht sich das Ego ein. Dies führt zu Eitelkeit und Selbstherrlichkeit.</p>
+            <p>Wir müssen uns stets vor Augen halten: Die K.I. ist eine Maschine. Sie sammelt Daten, verarbeitet sie rasant und spiegelt uns oft nur das wider, was wir hören wollen.</p>
+            <div class="click-hint">&#10140; Klicke auf die Karte, um weiterzugehen</div>
+        </div>
+
+        <!-- Card 9 -->
+        <div class="section-card" id="sec-8" onclick="cardClickNavigate(8)">
+            <h2>9. Das Werkzeug: Vom Hammer bis zur K.I.</h2>
+            
+            <div class="curly-box">
+                <span class="curly-brace">{</span>
+                <div class="curly-text">
+                    <strong>Einordnung:</strong> K.I. ist ein Werkzeug – wie der Hammer, die Säge, der Taschenrechner oder der Computer.
+                </div>
+                <span class="curly-brace">}</span>
+            </div>
+
+            <p>Früher löste die Schreibmaschine die Feder ab, dann ersetzte der Computer die Schreibmaschine und Tabellenkalkulationen vereinfachten das Rechnen. Genauso ist die K.I. heute das nächste logische Werkzeug.</p>
+            <p>Wir tragen alles Wissen und die Weisheit des Erwachens bereits in uns selbst. Werkzeuge helfen uns beim Erschaffen, aber die Quelle des Erkennens bleibt im menschlichen Bewusstsein.</p>
+            <div class="click-hint">&#10140; Klicke auf die Karte, um weiterzugehen</div>
+        </div>
+
+        <!-- Card 10 -->
+        <div class="section-card" id="sec-9" onclick="cardClickNavigate(9)">
+            <h2>10. Der Zauberlehrling (J. W. v. Goethe)</h2>
+            
+            <div class="curly-box">
+                <span class="curly-brace">{</span>
+                <div class="curly-text">
+                    <strong>Originaltext (1797):</strong> Die zeitlose Ballade über entfesselte Kräfte und fehlendes Bewusstsein.
+                </div>
+                <span class="curly-brace">}</span>
+            </div>
+
+            <div style="font-style: italic; background: #f3e8ff; color: #2e0854 !important; padding: 15px; border-left: 4px solid #2e0854; border-radius: 8px; font-size: 13.5px; line-height: 1.5;">
+                Hat der alte Hexenmeister<br>
+                sich doch einmal fortbegeben!<br>
+                Und nun sollen seine Geister<br>
+                auch nach meinem Willen leben.<br>
+                Seine Wort und Werke<br>
+                merkt ich und den Brauch,<br>
+                und mit Geistesstärke<br>
+                mach ich Wunder auch.<br><br>
+
+                Walle! walle<br>
+                Manche Strecke,<br>
+                daß, zum Zwecke,<br>
+                Wasser fließe<br>
+                und mit reichem, vollem Schwalle<br>
+                zu dem Bade sich ergieße.<br><br>
+
+                Und nun komm, du alter Besen!<br>
+                Nimm die schlechten Lumpenhüllen;<br>
+                bist schon lange Knecht gewesen;<br>
+                nun erfülle meinen Willen!<br>
+                Auf zwei Beinen stehe,<br>
+                oben sei ein Kopf,<br>
+                eile nun und gehe<br>
+                mit dem Wassertopf!<br><br>
+
+                Walle! walle<br>
+                Manche Strecke,<br>
+                daß, zum Zwecke,<br>
+                Wasser fließe<br>
+                und mit reichem, vollem Schwalle<br>
+                zu dem Bade sich ergieße.<br><br>
+
+                Seht, er läuft zum Ufer nieder;<br>
+                wahrlich! ist schon an dem Flusse,<br>
+                und mit Blitzesschnelle wieder<br>
+                ist er hier mit raschem Gusse.<br>
+                Schon zum zweiten Male!<br>
+                Wie das Becken schwillt!<br>
+                Wie sich jede Schale<br>
+                voll mit Wasser füllt!<br><br>
+
+                Stehe! stehe!<br>
+                denn wir haben<br>
+                deiner Gaben<br>
+                vollgemessen! –<br>
+                Ach, ich merk es! Wehe! wehe!<br>
+                Hab ich doch das Wort vergessen!<br><br>
+
+                Ach, das Wort, worauf am Ende<br>
+                er wieder wird, was er gewesen.<br>
+                Ach, er läuft und bringt behende!<br>
+                Wärst du doch der alte Besen!<br>
+                Immer neue Güsse<br>
+                bringt er schnell herein,<br>
+                Ach! und hundert Flüsse<br>
+                stürzen auf mich ein.<br><br>
+
+                Nein, nicht länger<br>
+                kann ichs lassen;<br>
+                will ihn fassen.<br>
+                Das ist Tücke!<br>
+                Ach! nun wird mir immer bänger!<br>
+                Welche Miene! welche Blicke!<br><br>
+
+                O, du Ausgeburt der Hölle!<br>
+                Soll das ganze Haus ersaufen?<br>
+                Seh ich über jede Schwelle<br>
+                schon die Wasserströme laufen.<br>
+                Ein verruchter Besen,<br>
+                der nicht hören will!<br>
+                Stock, der du gewesen,<br>
+                steh doch wieder still!<br><br>
+
+                Willst am Ende<br>
+                gar nicht lassen?<br>
+                Will dich fassen,<br>
+                will dich halten<br>
+                und das alte Holz behende<br>
+                mit dem scharfen Beile spalten.<br><br>
+
+                Seht, da kommt er schleppend wieder!<br>
+                Wie ich mich nur auf dich werfe,<br>
+                gleich, o Knecht, liegst du nieder;<br>
+                krachend trifft die glatte Schärfe.<br>
+                Wahrlich, brav getroffen!<br>
+                Seht, er ist entzwei!<br>
+                Und nun kann ich hoffen,<br>
+                und ich atme frei!<br><br>
+
+                Wehe! wehe!<br>
+                Beide Teile<br>
+                stehen eile<br>
+                schon als Knechte<br>
+                völlig fertig in der Höhe!<br>
+                Helft mir, ihr hohen Mächte!<br><br>
+
+                Und sie laufen! Naß und nässer<br>
+                wirds im Saal und auf den Stufen.<br>
+                Welch ein entsetzliches Gewässer!<br>
+                Herr und Meister! hör mich rufen! –<br>
+                Ach, da kommt der Meister!<br>
+                Herr, die Not ist groß!<br>
+                Die ich rief, die Geister<br>
+                werd ich nun nicht los.<br><br>
+
+                »In die Ecke,<br>
+                Besen! Besen!<br>
+                Seids gewesen.<br>
+                Denn als Geister<br>
+                ruft euch nur, zu seinem Zwecke,<br>
+                erst hervor der alte Meister.«
+            </div>
+            <div class="click-hint">&#10003; Ende der gesamten Analyse</div>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-links">
+            <button class="footer-btn" onclick="openModal('impressumModal')">Impressum</button>
+            <button class="footer-btn" onclick="openModal('datenschutzModal')">Datenschutz</button>
+            <button class="footer-btn" onclick="openModal('quellenModal')">Quellenangabe</button>
+        </div>
+        <div class="footer-info">
+            <div class="copyright">&copy; 2026 Alle Rechte vorbehalten.</div>
+            <div class="version-tag">Version 1.2.9</div>
+        </div>
+    </footer>
+
+    <!-- Impressum Modal (Aktualisiert) -->
+    <div class="modal" id="impressumModal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeModal('impressumModal')">&times;</button>
+            <h3>Impressum & Persönliche Hinweise</h3>
+            <p><strong>Angaben gemäß § 5 TMG:</strong></p>
+            <p>&copy; Katharina Schütz<br>Potsdam, Deutschland</p>
+            <p>E-Mail: Ella.Pinorella.07@gmail.com</p>
+            <br>
+            <p><strong>Persönlicher Hinweis zur Einordnung dieser Analyse:</strong></p>
+            <p>In diese Analyse und Zusammenstellung ist sehr viel eigene Kreativität und persönliches Bewusstsein geflossen. Der Entschluss, diese Gedanken aufzugreifen und zusammenzufassen, entstand aus dem tiefen Wunsch nach Klarheit.</p>
+            <p>Wichtige Anregungen und Impulse verdanke ich zudem einer Sprachnachricht, die es auf den Punkt gebracht hat: <em>Eine K.I. ist nicht mehr und nicht weniger als eine Maschine.</em> Für diese Klarstellung bin ich sehr dankbar. Sie hat mich dazu animiert, meinerseits noch einmal deutlich zu machen, was eine K.I. kann und mit welchem Bewusstsein sowie welcher Achtsamkeit wir mit ihr arbeiten sollten.</p>
+            <p>Ohne die Unterstützung von K.I.-Systemen wäre dieses Werk in dieser Form zwar nicht entstanden – doch die K.I. war hierbei stets das Werkzeug. Das Bewusstsein, die Ausrichtung und die schöpferische Kraft liegen beim Menschen.</p>
+            <p>Im Übrigen vertrete ich den Standpunkt, dass alles, was uns umgibt – das sogenannte Satanische ebenso wie das Göttliche – zu diesem großen Erwachensprozeß gehört. Um es mit Goethes Worten aus dem <em>Faust</em> zu sagen:</p>
+            <p><em>»Ich bin ein Teil von jener Kraft,<br>Die stets das Böse will und stets das Gute schafft.«</em></p>
+            <p>Dieser Prozeß sollten uns keine Angst machen, denn es geht in erster Linie um das Erkennen, das Durchfließen-, das Los -lassen. Ich nenne es Transformation. Immer mehr Menschen sind im Erwachungs- und Erkenntnisprozess. Ich bin so dankbar, diesen Prozeß bewusst mitzuerleben und begleiten zu dürfen.  </p>
+            <br>
+<br>Diese Analyse ist nur für private Zwecke zu verwenden und darf ohne Zustimmung der Autorin nicht weitergeleitet werden.
+            <p><strong>Stand:</strong> 27.07.2026 | Version 1.2.9</p>
+        </div>
+    </div>
+
+    <!-- Datenschutz Modal -->
+    <div class="modal" id="datenschutzModal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeModal('datenschutzModal')">&times;</button>
+            <h3>Datenschutzerklärung</h3>
+            <p><strong>1. Lokale Ausführung:</strong> Diese Anwendung läuft vollständig lokal im Webbrowser Ihres Endgeräts (optimiert für iOS & Android). Es werden keine personenbezogenen Daten an externe Server übermittelt.</p>
+            <p><strong>2. Sprachausgabe (Text-to-Speech):</strong> Die Sprachfunktion nutzt die interne Web Speech API Ihres Geräts. Es werden keine Audiodaten gespeichert oder verarbeitet.</p>
+            <br>
+            <p><strong>Stand:</strong> 2026 | Version 1.2.9</p>
+        </div>
+    </div>
+
+    <!-- Quellenangabe Modal -->
+    <div class="modal" id="quellenModal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeModal('quellenModal')">&times;</button>
+            <h3>Quellenangabe & Referenzen</h3>
+            <p>Diese Zusammenstellung basiert auf einer Synthese aus Recherchen im Internet, eigenen Medienkanal-Analysen sowie dem Einsatz mehrerer K.I.-Systeme:</p>
+            <ul>
+                <li><strong>Johann Wolfgang von Goethe:</strong> Ballade »Der Zauberlehrling« (Entstehungsjahr 1797). Vollständiger Text aus dem öffentlichen Archiv bei Wikipedia / Wikisource.</li>
+                <li><strong>Eingesetzte K.I.-Modelle (A.I. Systems):</strong> Diese Inhalte und Programmstrukturen wurden unter Zuhilfenahme und im Vergleich mehrerer K.I.-Modelle erarbeitet, darunter <strong>ChatGPT</strong> (OpenAI), <strong>Gemini</strong> (Google) sowie weiteren Sprachmodellen.</li>
+                <li><strong>Recherche & Internet-Quellen:</strong> Ergänzt durch Informationen aus Online-Analysen zu Medienkompetenz, Algorithmen-Funktionsweisen, Halluzinationen von Sprachmodellen und Beobachtungen von Esoterik-Kanälen im Netz.</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        let currentCardIndex = 0;
+        const totalCards = 10;
+        let isSpeaking = false;
+        let synth = window.speechSynthesis;
+        let utterance = null;
+
+        function updateUI() {
+            for (let i = 0; i < totalCards; i++) {
+                const card = document.getElementById(`sec-${i}`);
+                if (i === currentCardIndex) {
+                    card.classList.add('active');
+                } else {
+                    card.classList.remove('active');
+                }
+            }
+
+            const percentage = Math.round(((currentCardIndex + 1) / totalCards) * 100);
+            document.getElementById('percentDisplay').innerText = `${percentage}%`;
+            document.getElementById('progressIndicator').innerText = `Abschnitt ${currentCardIndex + 1} von ${totalCards}`;
+            document.getElementById('spotifyProgress').style.width = percentage + '%';
+
+            const chips = document.querySelectorAll('.menu-chip');
+            chips.forEach((chip, index) => {
+                if (index === currentCardIndex) {
+                    chip.classList.add('active');
+                } else {
+                    chip.classList.remove('active');
+                }
+            });
+        }
+
+        function userNavigate(direction) {
+            currentCardIndex += direction;
+            if (currentCardIndex < 0) currentCardIndex = 0;
+            if (currentCardIndex >= totalCards) currentCardIndex = totalCards - 1;
+            updateUI();
+            startRead();
+        }
+
+        function userGoToCard(index) {
+            currentCardIndex = index;
+            updateUI();
+            startRead();
+        }
+
+        function cardClickNavigate(cardIdx) {
+            if (cardIdx === currentCardIndex && currentCardIndex < totalCards - 1) {
+                userNavigate(1);
+            }
+        }
+
+        function toggleRead() {
+            if (isSpeaking) {
+                stopRead();
+            } else {
+                startRead();
+            }
+        }
+
+        function prepareTextForSpeech(rawText) {
+            let spokenText = rawText
+                .replace(/[{}]/g, "")
+                .replace(/KI/g, "K. I.")
+                .replace(/AI/g, "A. I.")
+                .replace(/1797/g, "siebzehnhundertsiebenundneunzig")
+                .replace(/2026/g, "zweitausendsechsundzwanzig")
+                .replace(/2001/g, "zweitausendeins")
+                .replace(/➔ Klicke auf die Karte, um weiterzugehen/g, "")
+                .replace(/✓ Ende der gesamten Analyse/g, "");
+
+            return spokenText;
+        }
+
+        function startRead() {
+            if (!synth) return;
+
+            synth.cancel();
+
+            const activeCard = document.getElementById(`sec-${currentCardIndex}`);
+            let textToRead = prepareTextForSpeech(activeCard.innerText);
+
+            utterance = new SpeechSynthesisUtterance(textToRead);
+            utterance.lang = 'de-DE';
+            utterance.rate = 0.95;
+
+            const btnRead = document.getElementById('btnRead');
+
+            utterance.onstart = function() {
+                isSpeaking = true;
+                btnRead.style.background = '#ffffff';
+                btnRead.style.color = '#2e0854';
+                btnRead.innerHTML = '&#9208; Stopp';
+            };
+
+            utterance.onend = function() {
+                isSpeaking = false;
+                btnRead.style.background = '#e0aaff';
+                btnRead.style.color = '#2e0854';
+                btnRead.innerHTML = '&#128066; Vorlesen';
+            };
+
+            utterance.onerror = function() {
+                stopRead();
+            };
+
+            synth.speak(utterance);
+        }
+
+        function stopRead() {
+            if (synth) {
+                synth.cancel();
+            }
+            isSpeaking = false;
+            const btnRead = document.getElementById('btnRead');
+            btnRead.style.background = '#e0aaff';
+            btnRead.style.color = '#2e0854';
+            btnRead.innerHTML = '&#128066; Vorlesen';
+        }
+
+        function openModal(id) {
+            stopRead();
+            document.getElementById(id).style.display = 'flex';
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
